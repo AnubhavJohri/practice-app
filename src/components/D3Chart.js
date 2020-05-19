@@ -137,6 +137,6 @@ class D3Chart extends Component {
             .attr("fill","blue");
 
     }
-    render() { return <svg width="600" height="600"></svg> }
+    render() { return <svg width="600" height="500"></svg> }
 }
 export default D3Chart

@@ -11,6 +11,7 @@ import Component2 from "./components/Component2";
 import Component3 from "./components/Component3";
 import Login from "./components/Login";
 import D3Chart from "./components/D3Chart";
+import D3Chart1 from "./components/D3Chart1";
 
 
 class App extends Component {
@@ -28,6 +29,7 @@ class App extends Component {
               <Route exact path='/Component2' component={Component2} />
               <Route exact path='/Component3' component={Component3} />
               <Route exact path='/d3chart' component={D3Chart} />
+              <Route exact path='/d3chart1' component={D3Chart1} />
               <Route exact path='/navbar' component={Navbar1} />
               <Route exact path='/**' render={()=><Redirect to="/home"/>} />
             </Switch>
