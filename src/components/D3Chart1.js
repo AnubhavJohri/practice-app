@@ -20,9 +20,10 @@ class D3Chart1 extends Component {
             { "food": "Cheese Burger", "quantity": 8, "quantity1": 5 },
             { "food": "Sandwiches", "quantity": 18, "quantity1": 20 }]
         //DATASET KEYS HAVE TO BE HARDCODED FOR EACH GRAPH
-        // var dataset = d3.stack().keys()(data) layout.stack()(["quantity", "quantity1"]).map((q) => data.map((d) => { return ({ x: d.food, y: d[q] }) }))
-        var colors = ["b33040", "#d25c4d"];
-        console.log("data and dataset in barchart=", data, dataset);
+
+        var keys = Object.keys(data[0]).filter(d => d !== "food");
+        var colors = ["blue", "lightblue"];
+        console.log("data and dataset in barchart=", data, keys);
         var svg = d3.select("svg");
         var margin = 200;
         var width = svg.attr("width") - margin;
@@ -42,6 +43,10 @@ class D3Chart1 extends Component {
         var yScale = d3.scaleLinear()
             .range([height, 0])
             .domain([0, d3.max(data, function (d) { return (d.quantity + d.quantity1); }) + 2]);
+        var zScale = d3.scaleOrdinal()
+            .range(["#17a2b8", "lightblue"])
+            .domain(keys);
+
 
         var g = svg.append("g")
             .attr("transform", "translate(" + 100 + "," + 100 + ")");
@@ -77,30 +82,43 @@ class D3Chart1 extends Component {
                 .tickSize(-width, 0, 0)
                 .tickFormat(''))
 
-        // Create groups for each series, rects for each segment 
-        var groups = svg.selectAll("g.cost")
-            .data(dataset)
-            .enter().append("g")
-            .attr("class", "cost")
-            .style("fill", function (d, i) { return colors[i]; });
-
-        // var rect = groups.selectAll("rect")
-             groups.selectAll("rect")
-            .data(function (d) { return d; })
+        g.append("g")
+            .selectAll("g")
+            .data(d3.stack().keys(keys)(data))
             .enter()
-            .append("rect")
-            .attr("x", function (d) { return xScale(d.x); })
-            .attr("y", function (d) { return yScale(d.y); })
-            .attr("height", function (d) { return y(d.y0) - y(d.y0 + d.y); })
-            .attr("width", xScale.bandwidth())
-            // .on("mouseover", function () { tooltip.style("display", null); })
-            // .on("mouseout", function () { tooltip.style("display", "none"); })
-            // .on("mousemove", function (d) {
-            //     var xPosition = d3.mouse(this)[0] - 15;
-            //     var yPosition = d3.mouse(this)[1] - 25;
-            //     tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-            //     tooltip.select("text").text(d.y);
-            // });
+            .append("g")
+            .attr("fill", function (d) {console.log("fill=",d);return zScale(d.key);})
+            .selectAll("rect")
+            .data(function (d) {return d;})
+            .enter().append("rect")
+            .attr("x", function (d) {console.log("x1=",d);return xScale(d.data.food);})
+            .attr("y", function (d) {console.log("y=",d);return yScale(d[1]);})
+            .attr("height", function (d) {console.log("height=",d);return yScale(d[0]) - yScale(d[1]);})
+            .attr("width", xScale.bandwidth());
+        // // Create groups for each series, rects for each segment 
+        // var groups = svg.selectAll("g.cost")
+        //     .data(dataset)
+        //     .enter().append("g")
+        //     .attr("class", "cost")
+        //     .style("fill", function (d, i) { return colors[i]; });
+
+        // // var rect = groups.selectAll("rect")
+        //      groups.selectAll("rect")
+        //     .data(function (d) { return d; })
+        //     .enter()
+        //     .append("rect")
+        //     .attr("x", function (d) { return xScale(d.x); })
+        //     .attr("y", function (d) { return yScale(d.y); })
+        //     .attr("height", function (d) { return y(d.y0) - y(d.y0 + d.y); })
+        //     .attr("width", xScale.bandwidth())
+        //     // .on("mouseover", function () { tooltip.style("display", null); })
+        // .on("mouseout", function () { tooltip.style("display", "none"); })
+        // .on("mousemove", function (d) {
+        //     var xPosition = d3.mouse(this)[0] - 15;
+        //     var yPosition = d3.mouse(this)[1] - 25;
+        //     tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+        //     tooltip.select("text").text(d.y);
+        // });
         // g.selectAll('rect')
         // .data(data)
         // .enter()
@@ -151,7 +169,7 @@ class D3Chart1 extends Component {
         g.append("path")
             .datum(data)
             .attr("fill", "none")
-            .attr("stroke", "lightblue")
+            .attr("stroke", "yellow")
             .attr("stroke-width", 1.5)
             .attr("d", d3.line()
                 .x(function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
