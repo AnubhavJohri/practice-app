@@ -82,6 +82,7 @@ class D3Chart1 extends Component {
                 .tickSize(-width, 0, 0)
                 .tickFormat(''))
 
+                
         g.append("g")
             .selectAll("g")
             .data(d3.stack().keys(keys)(data))
