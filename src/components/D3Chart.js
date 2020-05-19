@@ -32,11 +32,11 @@ class D3Chart extends Component {
         var xScale = d3.scaleBand()
             .range([0, width])
             .padding(0.4)
-            .align(0.8)
+            // .align(0.8)
             .domain(data.map(function (d) { return d.food; }));
         var yScale = d3.scaleLinear()
             .range([height, 0])
-            .domain([0, d3.max(data, function (d) { return d.quantity; })]);
+            .domain([0, d3.max(data, function (d) { return d.quantity; })+2]);
 
         var g = svg.append("g")
             .attr("transform", "translate(" + 100 + "," + 100 + ")");
@@ -72,24 +72,7 @@ class D3Chart extends Component {
                 .tickSize(-width, 0, 0)
                 .tickFormat(''))
 
-        g.append("path")
-            .datum(data)
-            .attr("fill", "none")
-            .attr("stroke", "steelblue")
-            .attr("stroke-width", 1.5)
-            .attr("d", d3.line()
-                .x(function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
-                .y(function (d) { return yScale(d.quantity) }))
-        g.selectAll(".dot")
-            .data(data)
-            .enter().append("circle") // Uses the enter().append() method
-            .attr("class", "dot") // Assign a class for styling
-            .attr("cx", function (d) { return xScale(d.food)+xScale.bandwidth()/2 })
-            .attr("cy", function (d) { return yScale(d.quantity) })
-            .attr("r", 4)
-            .attr("fill","blue");
-
-        g.selectAll('rect')
+            g.selectAll('rect')
             .data(data)
             .enter()
             .append("rect")
@@ -119,7 +102,41 @@ class D3Chart extends Component {
                     .attr('x', (a) => xScale(a.food) + 5)
                     .attr('width', xScale.bandwidth() - 1)
             })
+
+            g.append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("d", d3.line()
+                .x(function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
+                .y(function (d) { return yScale(d.quantity) }))
+        g.selectAll(".dot")
+            .data(data)
+            .enter().append("circle") // Uses the enter().append() method
+            .attr("class", "dot") // Assign a class for styling
+            .attr("cx", function (d) { return xScale(d.food)+xScale.bandwidth()/2 })
+            .attr("cy", function (d) { return yScale(d.quantity) })
+            .attr("r", 4)
+            .attr("fill","blue");
+            g.append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", "lightblue")
+            .attr("stroke-width", 1.5)
+            .attr("d", d3.line()
+                .x(function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
+                .y(function (d) { return yScale(d.quantity+2) }))
+        g.selectAll("dot")
+            .data(data)
+            .enter().append("circle") // Uses the enter().append() method
+            .attr("class", "dot1") // Assign a class for styling
+            .attr("cx", function (d) { return xScale(d.food)+xScale.bandwidth()/2 })
+            .attr("cy", function (d) { return yScale(d.quantity+2) })
+            .attr("r", 4)
+            .attr("fill","blue");
+
     }
-    render() { return <svg width="500" height="500"></svg> }
+    render() { return <svg width="600" height="600"></svg> }
 }
 export default D3Chart
