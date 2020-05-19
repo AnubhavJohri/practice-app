@@ -119,36 +119,6 @@ class D3Chart1 extends Component {
         //     tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
         //     tooltip.select("text").text(d.y);
         // });
-        // g.selectAll('rect')
-        // .data(data)
-        // .enter()
-        // .append("rect")
-        // .attr('fill', 'orange')
-        // .attr("x", function (d) { return xScale(d.food); })
-        // .attr("y", function (d) { return yScale(d.quantity+d.quantity1); })
-        // .attr("width", xScale.bandwidth())
-        // .attr("height", function (d) { return height - yScale(d.quantity); })
-        // .on('mouseenter', function (actual, i) {
-        //     d3.select(this)
-        //         .transition()
-        //         .duration(300)
-        //         .attr('opacity', 0.5)
-        //         .attr('fill', "blue")
-        //         .attr('text', "aa")
-        //         .attr('x', (a) => xScale(a.food) - 5)
-        //         .attr('width', xScale.bandwidth() + 10)
-
-        //     d3.select(this)
-        //         .append('text')
-        //         .text('aaa')
-        // })
-        // .on('mouseleave', function (actual, i) {
-        //     d3.select(this)
-        //         .attr('opacity', 1)
-        //         .attr('fill', "orange")
-        //         .attr('x', (a) => xScale(a.food) + 5)
-        //         .attr('width', xScale.bandwidth() - 1)
-        // })
 
         g.append("path")
             .datum(data)
@@ -169,7 +139,7 @@ class D3Chart1 extends Component {
         g.append("path")
             .datum(data)
             .attr("fill", "none")
-            .attr("stroke", "yellow")
+            .attr("stroke", "#ffc107")
             .attr("stroke-width", 1.5)
             .attr("d", d3.line()
                 .x(function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
