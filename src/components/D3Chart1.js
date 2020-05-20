@@ -35,21 +35,45 @@ class D3Chart1 extends Component {
             .attr("y", 50)
             .attr("font-size", "24px")
             .text("Stacked Bar Graph")
+        
+        //arr :- all Key values that have to be stacked in 1 bar 
+        //d :- 1 data object out of the whole data array containing the whole object of data passed
+        //.i.e of format :-{ "food": "Sandwiches", "quantity": 18, "quantity1": 20 }
+        const calculateTotal = (arr,d) =>{
+            let total=0;
+            arr.forEach(ele=>total+=d[ele]);
+            return total;
+        }
 
+        //1.)XSCALE
         var xScale = d3.scaleBand()
             .range([0, width])
             .padding(0.4)
             .domain(data.map(function (d) { return d.food; }));
+        //2.)YSCALE
         var yScale = d3.scaleLinear()
             .range([height, 0])
-            .domain([0, d3.max(data, function (d) { return (d.quantity + d.quantity1); }) + 2]);
+            .domain([0, d3.max(data, function (d) { 
+                return (calculateTotal(keys,d) + 2);
+            })])
+        //3.)YSCALE
         var zScale = d3.scaleOrdinal()
             .range(["#17a2b8", "lightblue"])
             .domain(keys);
 
-
         var g = svg.append("g")
             .attr("transform", "translate(" + 100 + "," + 100 + ")");
+
+        // .attr("transform", "translate(100,100)")      // This controls the rotate position of the Axis
+        
+        // g.append("g")
+        // .attr("transform", "translate(0,200)")
+        //     .call(d3.axisBottom(xScale))
+        //     .selectAll("text")
+        //     .attr("transform", "translate(-10,10)rotate(-45)")
+        //     .style("text-anchor", "end")
+        //     .style("font-size", 20)
+        //     .style("fill", "#69a3b2")
 
         g.append("g")
             .attr("transform", "translate(0," + height + ")")
@@ -82,19 +106,19 @@ class D3Chart1 extends Component {
                 .tickSize(-width, 0, 0)
                 .tickFormat(''))
 
-                
+
         g.append("g")
             .selectAll("g")
             .data(d3.stack().keys(keys)(data))
             .enter()
             .append("g")
-            .attr("fill", function (d) {console.log("fill=",d);return zScale(d.key);})
+            .attr("fill", function (d) { console.log("fill=", d); return zScale(d.key); })
             .selectAll("rect")
-            .data(function (d) {return d;})
+            .data(function (d) { return d; })
             .enter().append("rect")
-            .attr("x", function (d) {console.log("x1=",d);return xScale(d.data.food);})
-            .attr("y", function (d) {console.log("y=",d);return yScale(d[1]);})
-            .attr("height", function (d) {console.log("height=",d);return yScale(d[0]) - yScale(d[1]);})
+            .attr("x", function (d) { console.log("x1=", d); return xScale(d.data.food); })
+            .attr("y", function (d) { console.log("y=", d); return yScale(d[1]); })
+            .attr("height", function (d) { console.log("height=", d); return yScale(d[0]) - yScale(d[1]); })
             .attr("width", xScale.bandwidth());
         // // Create groups for each series, rects for each segment 
         // var groups = svg.selectAll("g.cost")
@@ -121,6 +145,7 @@ class D3Chart1 extends Component {
         //     tooltip.select("text").text(d.y);
         // });
 
+
         g.append("path")
             .datum(data)
             .attr("fill", "none")
@@ -128,13 +153,13 @@ class D3Chart1 extends Component {
             .attr("stroke-width", 1.5)
             .attr("d", d3.line()
                 .x(function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
-                .y(function (d) { return yScale(d.quantity + d.quantity1) }))
+                .y(function (d) { return yScale(calculateTotal(keys,d)) }))
         g.selectAll(".dot")
             .data(data)
             .enter().append("circle") // Uses the enter().append() method
             .attr("class", "dot") // Assign a class for styling
             .attr("cx", function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
-            .attr("cy", function (d) { return yScale(d.quantity + d.quantity1) })
+            .attr("cy", function (d) { return yScale(calculateTotal(keys,d)) })
             .attr("r", 4)
             .attr("fill", "blue");
         g.append("path")
@@ -144,13 +169,13 @@ class D3Chart1 extends Component {
             .attr("stroke-width", 1.5)
             .attr("d", d3.line()
                 .x(function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
-                .y(function (d) { return yScale(d.quantity + d.quantity1 + 2) }))
+                .y(function (d) { return yScale(calculateTotal(keys,d) + 2) }))
         g.selectAll("dot")
             .data(data)
             .enter().append("circle") // Uses the enter().append() method
             .attr("class", "dot1") // Assign a class for styling
             .attr("cx", function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
-            .attr("cy", function (d) { return yScale(d.quantity + d.quantity1 + 2) })
+            .attr("cy", function (d) { return yScale(calculateTotal(keys,d) + 2) })
             .attr("r", 4)
             .attr("fill", "blue");
 
