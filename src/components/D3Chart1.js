@@ -14,18 +14,22 @@ class D3Chart1 extends Component {
 
     createBarChart() {
         const data = [
-            { "food": "Tacos", "quantity": 15, "quantity1": 8 },
-            { "food": "Hotdogs", "quantity": 24, "quantity1": 15 },
-            { "food": "Pizza", "quantity": 3, "quantity1": 3 },
-            { "food": "Cheese Burger", "quantity": 8, "quantity1": 5 },
-            { "food": "Sandwiches", "quantity": 18, "quantity1": 20 }]
-        //DATASET KEYS HAVE TO BE HARDCODED FOR EACH GRAPH
+            { "Month": "JAN", "quantity": 15, "quantity1": 8},
+            { "Month": "FEB", "quantity": 24, "quantity1": 15},
+            { "Month": "MARCH", "quantity": 3, "quantity1": 3},
+            { "Month": "APRIL", "quantity": 8, "quantity1": 5},
+            { "Month": "MAY", "quantity": 18, "quantity1": 20}]
+        
+        //Variable that's going to be displayed at Y-Axis and
+        //Each variable on Y-Axis will have a bar displayed
+        const yKeyName="Month";
+        const colors = ["#17a2b8", "lightblue","blue"];
+        const margin = 200;
+        
 
-        var keys = Object.keys(data[0]).filter(d => d !== "food");
-        var colors = ["blue", "lightblue"];
+        var keys = Object.keys(data[0]).filter(d => d !== yKeyName);
         console.log("data and dataset in barchart=", data, keys);
         var svg = d3.select("svg");
-        var margin = 200;
         var width = svg.attr("width") - margin;
         var height = svg.attr("height") - margin;
 
@@ -39,6 +43,9 @@ class D3Chart1 extends Component {
         //arr :- all Key values that have to be stacked in 1 bar 
         //d :- 1 data object out of the whole data array containing the whole object of data passed
         //.i.e of format :-{ "food": "Sandwiches", "quantity": 18, "quantity1": 20 }
+        //Function is used to RETURN TOTAL of all the KEY VALUES you want to display in 1 bar
+        //USAGE:- when we need to know the length of 1 stacked bar say:-{Month:"JAN",Prod1:18,Prod2:35,Prod3:10}
+        //It will return the value PROD1+PROD2+PROD3 of Key "JAN"
         const calculateTotal = (arr,d) =>{
             let total=0;
             arr.forEach(ele=>total+=d[ele]);
@@ -49,16 +56,16 @@ class D3Chart1 extends Component {
         var xScale = d3.scaleBand()
             .range([0, width])
             .padding(0.4)
-            .domain(data.map(function (d) { return d.food; }));
+            .domain(data.map(function (d) { return d[yKeyName]; }));
         //2.)YSCALE
         var yScale = d3.scaleLinear()
             .range([height, 0])
             .domain([0, d3.max(data, function (d) { 
                 return (calculateTotal(keys,d) + 2);
             })])
-        //3.)YSCALE
+        //3.)ZSCALE
         var zScale = d3.scaleOrdinal()
-            .range(["#17a2b8", "lightblue"])
+            .range(colors)
             .domain(keys);
 
         var g = svg.append("g")
@@ -116,7 +123,7 @@ class D3Chart1 extends Component {
             .selectAll("rect")
             .data(function (d) { return d; })
             .enter().append("rect")
-            .attr("x", function (d) { console.log("x1=", d); return xScale(d.data.food); })
+            .attr("x", function (d) { console.log("x1=", d); return xScale(d.data[yKeyName]); })
             .attr("y", function (d) { console.log("y=", d); return yScale(d[1]); })
             .attr("height", function (d) { console.log("height=", d); return yScale(d[0]) - yScale(d[1]); })
             .attr("width", xScale.bandwidth());
@@ -152,13 +159,13 @@ class D3Chart1 extends Component {
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
             .attr("d", d3.line()
-                .x(function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
+                .x(function (d) { return xScale(d[yKeyName]) + xScale.bandwidth() / 2 })
                 .y(function (d) { return yScale(calculateTotal(keys,d)) }))
         g.selectAll(".dot")
             .data(data)
             .enter().append("circle") // Uses the enter().append() method
             .attr("class", "dot") // Assign a class for styling
-            .attr("cx", function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
+            .attr("cx", function (d) { return xScale(d[yKeyName]) + xScale.bandwidth() / 2 })
             .attr("cy", function (d) { return yScale(calculateTotal(keys,d)) })
             .attr("r", 4)
             .attr("fill", "blue");
@@ -168,13 +175,13 @@ class D3Chart1 extends Component {
             .attr("stroke", "#ffc107")
             .attr("stroke-width", 1.5)
             .attr("d", d3.line()
-                .x(function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
+                .x(function (d) { return xScale(d[yKeyName]) + xScale.bandwidth() / 2 })
                 .y(function (d) { return yScale(calculateTotal(keys,d) + 2) }))
         g.selectAll("dot")
             .data(data)
             .enter().append("circle") // Uses the enter().append() method
             .attr("class", "dot1") // Assign a class for styling
-            .attr("cx", function (d) { return xScale(d.food) + xScale.bandwidth() / 2 })
+            .attr("cx", function (d) { return xScale(d[yKeyName]) + xScale.bandwidth() / 2 })
             .attr("cy", function (d) { return yScale(calculateTotal(keys,d) + 2) })
             .attr("r", 4)
             .attr("fill", "blue");
